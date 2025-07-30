@@ -81,7 +81,8 @@ class SSA(nn.Module):
         v_conv_out = self.v_conv(x_for_qkv)
         v_conv_out = self.v_bn(v_conv_out).reshape(T,B,C,N).contiguous()
         v_conv_out = self.v_lif(v_conv_out)
-        v = v_conv_out.transpose(-1, -2).reshape(T, B, N, self.num_heads, C//self.num_heads).permute(0, 1, 3, 2, 4).contiguous()
+        v = v_conv_out.transpose(-1, -2).reshape(T, B, N, self.num_heads, C // self.num_heads).permute(0, 1, 3, 2,
+                                                                                                       4).contiguous()
 
         attn = (q @ k.transpose(-2, -1))
         x = (attn @ v) * self.scale

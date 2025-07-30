@@ -30,23 +30,23 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 import numpy as np
 np.random.seed(_seed_)
-writer = SummaryWriter("./")
+writer = SummaryWriter("/home/user/kpm/results/RISTL")
 def parse_args():
     import argparse
     parser = argparse.ArgumentParser(description='PyTorch Classification Training')
 
-    parser.add_argument('--model', default='SEWResNet', help='model')
+    parser.add_argument('--model', default='spikformer', help='model')
     parser.add_argument('--dataset', default='cifar10dvs', help='dataset')
     parser.add_argument('--num-classes', type=int, default=10, metavar='N',
                         help='number of label classes (default: 1000)')
-    parser.add_argument('--data-path', default='/home/zhou/new_disk/Spike-Element-Wise-ResNet-main/dataset/CIFAR10DVS', help='dataset')
-    parser.add_argument('--device', default='cuda:1', help='device')
+    parser.add_argument('--data-path', default='/home/user/tr/Dataset/Event_Camera_Datasets/CIFAR10/CIFAR10DVS', help='dataset')
+    parser.add_argument('--device', default='cuda:0', help='device')
     parser.add_argument('-b', '--batch-size', default=16, type=int)
-    parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
+    parser.add_argument('-j', '--workers', default=0, type=int, metavar='N',
                         help='number of data loading workers (default: 4)')
 
     parser.add_argument('--print-freq', default=256, type=int, help='print frequency')
-    parser.add_argument('--output-dir', default='./logs', help='path where to save')
+    parser.add_argument('--output-dir', default='/home/user/kpm/results/RISTL/logs', help='path where to save')
     parser.add_argument('--resume', default='', help='resume from checkpoint')
     parser.add_argument(
         "--sync-bn",
