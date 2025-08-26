@@ -84,7 +84,16 @@ class ViTAlignmentTLTrainer(BaseTrainer):
         total_sps_loss, total_block_loss, total_attn_loss = 0, 0, 0
 
         # 使用简化的进度条，避免与详细信息冲突
-        for batch_idx, ((rgb_img, dvs_img), label) in enumerate(train_loader):
+        for batch_idx, data_batch in enumerate(train_loader):
+            # Robust unpacking
+            if len(data_batch) == 2:
+                # This handles the case where the dataloader returns (data, label)
+                (rgb_img, dvs_img), label = data_batch[0], data_batch[1]
+            elif len(data_batch) == 3:
+                # This handles the case where the dataloader returns (rgb, dvs, label)
+                rgb_img, dvs_img, label = data_batch[0], data_batch[1], data_batch[2]
+            else:
+                raise ValueError(f"Unexpected data format from DataLoader. Expected 2 or 3 items, got {len(data_batch)}")
             source, target, label = rgb_img.to(self.device), dvs_img.to(self.device), label.to(self.device)
 
             # Expand RGB data to T steps
@@ -166,7 +175,7 @@ class ViTAlignmentTLTrainer(BaseTrainer):
         correct, total = 0, 0
         with torch.no_grad():
             for batch_idx, item in enumerate(val_data_loader):
-                dvs_img, label = item
+                (rgb_img, dvs_img), label = item
                 dvs_img, label = dvs_img.to(self.device), label.to(self.device)
                 # Pass DVS data as the `source` argument for evaluation
                 target_clf = self.model(source=dvs_img)
@@ -215,7 +224,7 @@ class ViTAlignmentTLTrainer(BaseTrainer):
         pbar = tqdm(data_loader, desc='Testing', ncols=120, position=0)
         with torch.no_grad():
             for item in pbar:
-                dvs_img, label = item
+                (rgb_img, dvs_img), label = item
                 dvs_img, label = dvs_img.to(self.device), label.to(self.device)
                 # Pass DVS data as the `source` argument for evaluation
                 output = self.model(source=dvs_img)
